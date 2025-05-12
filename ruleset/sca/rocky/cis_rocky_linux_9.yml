@@ -50,7 +50,7 @@ checks:
       - soc_2: ["CC6.3", "CC6.6"]
     condition: all
     rules:
-      - "c:modprobe -n -v squashfs -> r:install /bin/false|Module squashfs not found"
+      - "c:modprobe -n -v squashfs -> r:install /bin/false|install /bin/true|Module squashfs not found"
       - "not c:lsmod -> r:squashfs"
       - 'd:/etc/modprobe.d/ -> r:\.*.conf -> r:^blacklist\s+squashfs'
 
@@ -75,7 +75,7 @@ checks:
       - soc_2: ["CC6.3", "CC6.6"]
     condition: all
     rules:
-      - "c:modprobe -n -v udf -> r:install /bin/false|Module udf not found"
+      - "c:modprobe -n -v udf -> r:install /bin/false|install /bin/true|Module udf not found"
       - "not c:lsmod -> r:udf"
       - 'd:/etc/modprobe.d/ -> r:\.*.conf -> r:^blacklist\s+udf'
 
@@ -760,7 +760,7 @@ checks:
       - nist_sp_800-53: ["SC-18(4)"]
     condition: all
     rules:
-      - "c:modprobe -n -v usb-storage -> r:install /bin/true"
+      - "c:modprobe -n -v usb-storage -> r:install /bin/true|install /bin/false"
       - "not c:lsmod -> r:usb-storage"
 
   ###############################################
@@ -1950,7 +1950,7 @@ checks:
       - mitre_techniques: ["T1068", "T1210"]
     condition: all
     rules:
-      - "c:modprobe -n -v tipc -> r:install /bin/true"
+      - "c:modprobe -n -v tipc -> r:install /bin/true|install /bin/false"
       - "not c:lsmod -> r:tipc"
 
   ###############################################
@@ -3061,9 +3061,9 @@ checks:
       - pci_dss_3.2.1: ["7.1", "7.1.1", "7.1.2", "7.1.3"]
       - pci_dss_4.0: ["1.3.1", "7.1"]
       - soc_2: ["CC5.2", "CC6.1"]
-    condition: all
+    condition: any
     rules:
-      - 'c:sshd -T -> r:^\s*AllowUsers\s+\w*|^\s*AllowGroups\s+\w*|^\s*DenyUsers\s+\w*|^\s*DenyGroups\s+\w*'
+      - 'c:sshd -T -> r:^\s*allowusers\s+\w*|^\s*allowgroups\s+\w*|^\s*denyusers\s+\w*|^\s*denygroups\s+\w*'
       - 'f:/etc/ssh/sshd_config -> r:^\s*AllowUsers\s+\w*|^\s*AllowGroups\s+\w*|^\s*DenyUsers\s+\w*|^\s*DenyGroups\s+\w*'
 
   # 5.2.5 Ensure SSH LogLevel is appropriate. (Automated)
@@ -3086,9 +3086,9 @@ checks:
       - nist_sp_800-53: ["AU-12", "AU-2", "SI-5"]
       - pci_dss_3.2.1: ["10.2", "10.3"]
       - pci_dss_4.0: ["10.2.1", "10.2.1.1", "10.2.1.2", "10.2.1.3", "10.2.1.4", "10.2.1.5", "10.2.1.6", "10.2.1.7", "10.2.2", "5.3.4", "6.4.1", "6.4.2"]
-    condition: all
+    condition: any
     rules:
-      - 'c:sshd -T -C user=root -> r:^\s*LogLevel\s+VERBOSE|^\s*LogLevel\s+INFO'
+      - 'c:sshd -T -C user=root -> r:^\s*loglevel\s+VERBOSE|^\s*loglevel\s+INFO'
       - "f:/etc/ssh/sshd_config -> r:loglevel"
 
   # 5.2.6 Ensure SSH PAM is enabled. (Automated)
@@ -3104,7 +3104,7 @@ checks:
       - mitre_tactics: ["TA0001"]
       - mitre_techniques: ["T1021", "T1021.004"]
       - nist_sp_800-53: ["CM-1", "CM-2", "CM-6", "CM-7", "IA-5"]
-    condition: all
+    condition: any
     rules:
       - 'c:sshd -T -C user=root -> r:^\s*usepam\s+yes'
       - 'not f:/etc/ssh/sshd_config -> r:^\sUsePAM\s+no'
@@ -3127,9 +3127,9 @@ checks:
       - nist_sp_800-53: ["AC-6(2)", "AC-6(5)"]
       - pci_dss_3.2.1: ["7.1", "7.1.1", "7.1.2", "7.1.3"]
       - soc_2: ["CC6.1", "CC6.3"]
-    condition: all
+    condition: any
     rules:
-      - 'c:sshd -T -C user=root -> r:^\s*PermitRootLogin\s*no'
+      - 'c:sshd -T -C user=root -> r:^\s*permitrootlogin\s*no'
       - 'not f:/etc/ssh/sshd_config -> r:^\sPermitRootLogin\s+yes'
 
   # 5.2.8 Ensure SSH HostbasedAuthentication is disabled. (Automated)
@@ -3150,9 +3150,9 @@ checks:
       - pci_dss_3.2.1: ["11.5", "2.2"]
       - pci_dss_4.0: ["1.1.1", "1.2.1", "1.2.6", "1.2.7", "1.5.1", "2.1.1", "2.2.1"]
       - soc_2: ["CC7.1", "CC8.1"]
-    condition: all
+    condition: any
     rules:
-      - 'c:sshd -T -C user=root -> r:^\s*HostbasedAuthentication\s*\t*no'
+      - 'c:sshd -T -C user=root -> r:^\s*hostbasedauthentication\s*\t*no'
       - 'not f:/etc/ssh/sshd_config -> r:^\sHostbasedAuthentication\s+yes'
 
   # 5.2.9 Ensure SSH PermitEmptyPasswords is disabled. (Automated)
@@ -3173,9 +3173,9 @@ checks:
       - nist_sp_800-53: ["CM-1", "CM-2", "CM-6", "CM-7", "IA-5"]
       - pci_dss_4.0: ["2.2.2", "8.3.5", "8.3.6", "8.6.3"]
       - soc_2: ["CC6.1"]
-    condition: all
+    condition: any
     rules:
-      - 'c:sshd -T -C user=root -> r:^\s*PermitEmptyPasswords\s*no'
+      - 'c:sshd -T -C user=root -> r:^\s*permitemptypasswords\s*no'
       - 'not f:/etc/ssh/sshd_config -> r:^\sPermitEmptyPasswords\s+yes'
 
   # 5.2.10 Ensure SSH PermitUserEnvironment is disabled. (Automated)
@@ -3197,9 +3197,9 @@ checks:
       - pci_dss_3.2.1: ["11.5", "2.2"]
       - pci_dss_4.0: ["1.1.1", "1.2.1", "1.2.6", "1.2.7", "1.5.1", "2.1.1", "2.2.1"]
       - soc_2: ["CC7.1", "CC8.1"]
-    condition: all
+    condition: any
     rules:
-      - 'c:sshd -T -C user=root -> r:^\s*PermitUserEnvironment\s*no'
+      - 'c:sshd -T -C user=root -> r:^\s*permituserenvironment\s*no'
       - 'not f:/etc/ssh/sshd_config -> r:^\sPermitUserEnvironment\s+yes'
 
   # 5.2.11 Ensure SSH IgnoreRhosts is enabled. (Automated)
@@ -3214,7 +3214,7 @@ checks:
       - mitre_tactics: ["TA0001"]
       - mitre_techniques: ["T1078", "T1078.001", "T1078.003"]
       - nist_sp_800-53: ["CM-1", "CM-2", "CM-6", "CM-7", "IA-5"]
-    condition: all
+    condition: any
     rules:
       - 'c:sshd -T -C user=root -> r:\s*ignorerhosts\s*yes'
       - 'not f:/etc/ssh/sshd_config -> r:^\s*ignorerhosts\s+no'
@@ -3238,9 +3238,9 @@ checks:
       - pci_dss_3.2.1: ["1.1.6", "1.2.1", "2.2.2", "2.2.5"]
       - pci_dss_4.0: ["1.2.5", "2.2.4", "6.4.1"]
       - soc_2: ["CC6.3", "CC6.6"]
-    condition: all
+    condition: any
     rules:
-      - 'c:sshd -T -C user=root -> r:^\s*X11Forwarding\s*no'
+      - 'c:sshd -T -C user=root -> r:^\s*x11forwarding\s*no'
       - 'not f:/etc/ssh/sshd_config -> r:^\s*x11forwarding\s+yes'
 
   # 5.2.13 Ensure SSH AllowTcpForwarding is disabled. (Automated)
@@ -3265,9 +3265,9 @@ checks:
       - pci_dss_3.2.1: ["11.5", "2.2"]
       - pci_dss_4.0: ["1.1.1", "1.2.1", "1.2.6", "1.2.7", "1.5.1", "2.1.1", "2.2.1"]
       - soc_2: ["CC7.1", "CC8.1"]
-    condition: all
+    condition: any
     rules:
-      - 'c:sshd -T -C user=root -> r:^\s*AllowTcpForwarding\s+no'
+      - 'c:sshd -T -C user=root -> r:^\s*allowtcpforwarding\s+no'
       - 'not f:/etc/ssh/sshd_config -> r:^\s*AllowTcpForwarding\s+yes'
 
   # 5.2.14 Ensure system-wide crypto policy is not over-ridden. (Automated)
@@ -3303,7 +3303,7 @@ checks:
       - nist_sp_800-53: ["CM-1", "CM-2", "CM-6", "CM-7", "IA-5"]
     condition: all
     rules:
-      - 'c:sshd -T -C user=root -> r:^\s*Banner\s*/\w+'
+      - 'c:sshd -T -C user=root -> r:^\s*banner\s*/\w+'
 
   # 5.2.16 Ensure SSH MaxAuthTries is set to 4 or less. (Automated)
   - id: 31633
@@ -3323,9 +3323,9 @@ checks:
       - pci_dss_3.2.1: ["10.1", "10.2.2", "10.2.4", "10.2.5", "10.3"]
       - pci_dss_4.0: ["10.2", "10.2.1", "10.2.1.2", "10.2.1.5", "9.4.5"]
       - soc_2: ["CC5.2", "CC7.2"]
-    condition: all
+    condition: any
     rules:
-      - 'c:sshd -T -C user=root -> n:^\s*MaxAuthTries\s*\t*(\d+) compare <= 4'
+      - 'c:sshd -T -C user=root -> n:^\s*maxauthtries\s*\t*(\d+) compare <= 4'
       - 'f:/etc/ssh/sshd_config -> n:^\s*MaxAuthTries\s*\t*(\d+) compare <= 4'
 
   # 5.2.17 Ensure SSH MaxStartups is configured. (Automated)
@@ -3368,7 +3368,7 @@ checks:
       - nist_sp_800-53: ["CM-1", "CM-2", "CM-6", "CM-7", "IA-5"]
     condition: any
     rules:
-      - 'c:sshd -T -C user=root -> n:^\s*MaxSessions\s+(\d+) compare <= 10'
+      - 'c:sshd -T -C user=root -> n:^\s*maxsessions\s+(\d+) compare <= 10'
       - 'not f:/etc/ssh/sshd_config -> n:^\s*MaxSessions\s+(\d+) compare > 10'
 
   # 5.2.19 Ensure SSH LoginGraceTime is set to one minute or less. (Automated)
@@ -3384,7 +3384,7 @@ checks:
       - mitre_techniques: ["T1110", "T1110.001", "T1110.003", "T1110.004"]
     condition: all
     rules:
-      - 'c:sshd -T -C user=root -> n:^\s*LoginGraceTime\s*\t*(\d+) compare <= 60 && n:^\s*LoginGraceTime\s*\t*(\d+) compare > 0'
+      - 'c:sshd -T -C user=root -> n:^\s*logingracetime\s*\t*(\d+) compare <= 60 && n:^\s*LoginGraceTime\s*\t*(\d+) compare > 0'
       - 'f:/etc/ssh/sshd_config -> n:^\s*LoginGraceTime\s*\t*(\d+) compare <= 60 && n:^\s*LoginGraceTime\s*\t*(\d+) compare > 0'
 
   # 5.2.20 Ensure SSH Idle Timeout Interval is configured. (Automated)
@@ -3403,8 +3403,8 @@ checks:
       - nist_sp_800-53: ["CM-1", "CM-2", "CM-6", "CM-7", "IA-5"]
     condition: all
     rules:
-      - 'c:sshd -T -C user=root -> n:^\s*ClientAliveInterval\s*\t*(\d+) compare > 0 && n:^\s*ClientAliveInterval\s*\t*(\d+) compare <= 900'
-      - 'c:sshd -T -C user=root -> n:^\s*ClientAliveCountMax\s*\t*(\d+) compare == 0'
+      - 'c:sshd -T -C user=root -> n:^\s*clientaliveinterval\s*\t*(\d+) compare > 0 && n:^\s*clientaliveinterval\s*\t*(\d+) compare <= 900'
+      - 'c:sshd -T -C user=root -> n:^\s*clientalivecountmax\s*\t*(\d+) compare == 0'
 
   ############################################################
   # 5.3 Configure privilege escalation
@@ -3459,7 +3459,7 @@ checks:
     description: "sudo can use a custom log file."
     rationale: "A sudo log file simplifies auditing of sudo commands."
     impact: "WARNING: Editing the sudo configuration incorrectly can cause sudo to stop functioning. Always use visudo to modify sudo configuration files. Creation of additional log files can cause disk space exhaustion if not correctly managed. You should configure logrotate to manage the sudo log in accordance with your local policy."
-    remediation: 'Edit the file /etc/sudoers or a file in /etc/sudoers.d/ with visudo or visudo -f <PATH TO FILE> and add the following line: Defaults logfile="<PATH TO CUSTOM LOG FILE>" Example Defaults logfile="/var/log/sudo.log".'
+    remediation: 'Edit the file /etc/sudoers or a file in /etc/sudoers.d/ with visudo or visudo -f <PATH TO FILE> and add the following line: Defaults logfile=<PATH TO CUSTOM LOG FILE>" Example Defaults logfile="/var/log/sudo.log".'
     compliance:
       - cis: ["5.3.3"]
       - cis_csc_v8: ["8.5"]
@@ -3475,8 +3475,8 @@ checks:
       - soc_2: ["CC5.2", "CC7.2"]
     condition: any
     rules:
-      - 'f:/etc/sudoers -> r:^Defaults logfile="'
-      - 'd:/etc/sudoers.d -> r:\. -> r:^Defaults\s+logfile="'
+      - 'f:/etc/sudoers -> r:^Defaults logfile='
+      - 'd:/etc/sudoers.d -> r:\. -> r:^Defaults\s+logfile='
 
   # 5.3.4 Ensure users must provide password for escalation. (Automated)
   - id: 31641
