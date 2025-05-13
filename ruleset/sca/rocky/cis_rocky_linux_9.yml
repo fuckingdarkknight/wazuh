@@ -2029,7 +2029,7 @@ checks:
     condition: any
     rules:
       - "c:rpm -q firewalld -> r:^package firewalld is not installed"
-      - "not c:firewall-cmd --state -> r:^running"
+      - "c:firewall-cmd --state -> r:^running"
       - "c:systemctl is-enabled firewalld -> r:^masked"
 
   # 3.4.2.1 Ensure firewalld default zone is set. (Automated) - Not Implemented
@@ -2103,8 +2103,6 @@ checks:
     condition: all
     rules:
       - "c:rpm -q nftables -> r:^nftables-"
-      - "c:nft list ruleset -> r:policy drop"
-      - "c:nft list ruleset -> r:policy drop"
       - "c:nft list ruleset -> r:policy drop"
 
   ############################################################
@@ -2483,9 +2481,9 @@ checks:
       - pci_dss_3.2.1: ["7.1", "7.1.1", "7.1.2", "7.1.3"]
       - pci_dss_4.0: ["1.3.1", "7.1"]
       - soc_2: ["CC5.2", "CC6.1"]
-    condition: none
+    condition: all
     rules:
-      - 'c:stat -c "%n %U" /sbin/auditctl /sbin/aureport /sbin/ausearch /sbin/autrace /sbin/auditd /sbin/augenrules -> !r:root|\\s*'
+      - 'c:stat -c "%n %U" /sbin/auditctl /sbin/aureport /sbin/ausearch /sbin/autrace /sbin/auditd /sbin/augenrules -> r:root'
 
   # 4.1.4.10 Ensure audit tools belong to group root. (Automated)
   - id: 31599
@@ -3382,7 +3380,7 @@ checks:
       - mitre_mitigations: ["M1036"]
       - mitre_tactics: ["TA0006"]
       - mitre_techniques: ["T1110", "T1110.001", "T1110.003", "T1110.004"]
-    condition: all
+    condition: any
     rules:
       - 'c:sshd -T -C user=root -> n:^\s*logingracetime\s*\t*(\d+) compare <= 60 && n:^\s*LoginGraceTime\s*\t*(\d+) compare > 0'
       - 'f:/etc/ssh/sshd_config -> n:^\s*LoginGraceTime\s*\t*(\d+) compare <= 60 && n:^\s*LoginGraceTime\s*\t*(\d+) compare > 0'
